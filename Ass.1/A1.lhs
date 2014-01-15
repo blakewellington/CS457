@@ -1,29 +1,7 @@
 ----------------------------------------------------------------------
 CS457/557 Functional Languages, Winter 2014                 Homework 1
+                          Blake Wellington               Jan. 14, 2014
 ----------------------------------------------------------------------
-
-Due: At the start of class (10am) on January 16, 2014 in person, or by
-the same time if you submit by email or D2L.
-
-To complete this set of homework exercises, you may need to use or know
-about the following small collection of Haskell prelude functions that
-have not yet been discussed in class:
-
-- null :: [a] -> Bool   returns True if it is applied to an empty
-  list and False otherwise.  For example null [] is True, while
-  null [1,2,3] is False.
-
-- head :: [a] -> a returns the first value in a nonempty list.  For
-  example, head [1,2,3,4] is 1.
-
-- tail :: [a] -> [a] returns the input list but with its first element
-  removed.  For example, tail [1,2,3,4] is [2,3,4].
-
-- takeWhile :: (a -> Bool) -> [a] -> [a], returns all of the values at
-  the front of the input list that satisfy the predicate argument.
-  For example, takeWhile even [2,4,8,11,12,20] returns [2,4,8].
-  while takeWhile even [1..10] returns [].
-
 ----------------------------------------------------------------------
 Question:
 1. Explain what the following Haskell function does:
@@ -31,9 +9,19 @@ Question:
 > dup    :: (a -> a -> a) -> a -> a
 > dup f x = f x x
 
-Answer:
+--------------------------    Answer:   ------------------------------
 The dup function takes a function and a single argument and returns
 the value of the function with the argument duplicated.
+
+Testing this:
+*Main> dup (+) 4
+8
+*Main> dup (+) 2
+4
+*Main> dup (*) 3
+9
+*Main> dup (/) 9
+1.0
 
 ----------------------------------------------------------------------
 Question:
@@ -46,7 +34,7 @@ double n = 2 * n
 square  :: Integer -> Integer
 square n = n * n
 
-Answer:
+--------------------------    Answer:   ------------------------------
 The previous functions can use the dup function as written below. Since
 the dup function duplicates the arguments of a function, it can be used
 in functions that use a given argument twice, such as squaring or 
@@ -58,6 +46,25 @@ doubling a number.
 > square :: Integer -> Integer
 > square n = dup (*) n
 
+Testing double:
+
+*Main> double 4
+8
+*Main> double 13
+26
+*Main> double (-5)
+-10
+
+and for square:
+
+*Main> square 2
+4
+*Main> square 99
+9801
+*Main> square (-5)
+25
+
+
 ----------------------------------------------------------------------
 Question:
 2. Without using any explicit recursion, given Haskell definitions for
@@ -68,7 +75,7 @@ the following functions:
   powerOfTwo 8 should return 256.  Of course, your answer should *not*
   use the built in Haskell functions for raising a value to a power :-)
 
-Answer:
+--------------------------    Answer:   ------------------------------
 Since Haskell works well against lists, this task can be converted into
 one involving lists. The product function can be applied to a list of
 numbers to multiply them all together. Applied to this problem, the 
@@ -93,12 +100,38 @@ Turning this into a function, we have:
 > powerOfTwo :: Int -> Integer
 > powerOfTwo n = product (take n (repeat 2))
 
+Note: This solution works only for positive integers. In order to make
+it work for negative values of n, we would have to put in a different
+type signature and implement a guard as below.
+
+powerOfTwo :: Int -> Float
+powerOfTwo n
+     | n >= 0    = product (take n (repeat 2))
+     | otherwise = (1/) (product (take n (repeat 2))
+
+But, since you gave us the Int -> Integer signature...
+
+Testing:
+
+*Main> powerOfTwo 3
+8
+*Main> powerOfTwo 9
+512
+*Main> powerOfTwo 32
+4294967296
+*Main> powerOfTwo (-3)
+1
+*Main> powerOfTwo 0
+1
+*Main> powerOfTwo 1
+2
+
 ----------------------------------------------------------------------
 Question:
 - logTwo :: Integer -> Int
   (logTwo v) returns the smallest integer n such that v < powerOfTwo n.
 
-Answer:
+--------------------------    Answer:   ------------------------------
 There are undoubtedly many ways to solve this.  To develop this 
 non-recursively, I decided to use a comprehension to build a list of
 numbers that could be tested.
@@ -112,6 +145,32 @@ such that v < powerOfTwo n.
 > logTwo :: Integer -> Int
 > logTwo v =  head [n | n <- [1..], v < (powerOfTwo n)]
 
+Note: This also does not work with negative values of v.
+
+Testing:
+*Main> logTwo 44
+6
+*Main> logTwo 0
+1
+*Main> logTwo 1
+1
+*Main> logTwo 2
+2
+*Main> logTwo 3
+2
+*Main> logTwo 4
+3
+*Main> lotTwo 5
+
+*Main> logTwo 5
+3
+*Main> logTwo 1024
+11
+*Main> logTwo 1023
+10
+*Main> logTwo 1025
+11
+
 ----------------------------------------------------------------------
 Question:
 - copy :: Int -> a -> [a]
@@ -121,13 +180,34 @@ Question:
   you should not use replicate in your answer; you should not replicate
   replicate either :-)
 
-Answer:
+--------------------------    Answer:   ------------------------------
 This version of copy uses the repeat prelude function to build an 
 infinitely long list of repeating values, then takes the first n
 values in that list.
 
 > copy :: Int -> a -> [a]
 > copy n x = take n (repeat x)
+
+Testing:
+*Main> copy 4 True
+[True,True,True,True]
+*Main> copy 9 2
+[2,2,2,2,2,2,2,2,2]
+*Main> copy 36 "Hello, Mark Jones!"
+["Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!",
+"Hello, Mark Jones!","Hello, Mark Jones!","Hello, Mark Jones!"]
+*Main> copy 5 ["Hello","Mark","Jones"]
+[["Hello","Mark","Jones"],["Hello","Mark","Jones"],["Hello","Mark","Jones"],["Hello","Mark","Jones"],["Hello","Mark","Jones"]]
 
 ----------------------------------------------------------------------
 Question:
@@ -137,7 +217,7 @@ Question:
   multiApply square 2 2, should return 16, while
   multiApply not 0 True will return True.
 
-Answer:
+--------------------------    Answer:   ------------------------------
 To apply a function multiple times, one can employ the iterate function.
 The iterate function applies a function to a starting value and repeats
 indefinitely. By choosing some defined element of the resulting list, 
@@ -153,10 +233,9 @@ Now suppose that we define the following function using multiApply:
 
 What is the type of this function, and what exactly does it do?
 
-Answer:
-the q function is of type a, the polymorphic type. It applies to any
-Haskell primitive type or user-defined type. To test this, I ran the
-following command:
+--------------------------    Answer:   ------------------------------
+The q function is of type (a -> a) -> Int -> Int -> a -> a 
+To test this, I ran the following command:
 
 :t q
 
@@ -164,14 +243,11 @@ which returns
 
 q :: (a -> a) -> Int -> Int -> a -> a
 
-So the q function is of a generic, polymorphic type. It can return any
-type of value, depending on what type of values are passed into it
-as a list.
+So the q function takes as arguments a function of type (a -> a),
+two Ints, and a polymorphic type (a) and returns the same polymorphic
+type.
 
-
-
-
-
+As for what it does...
 
 
 ----------------------------------------------------------------------
@@ -184,7 +260,7 @@ as (!!) except that it starts counting from the end of the input list.
 For example, revindex [1..10] 0 should return 10, while revindex [1..10] 7
 whould return 3.
 
-Answer:
+--------------------------    Answer:   ------------------------------
 To reverse the !! operator, we can simply reverse a list, then apply the
 !! operator to it.
 
@@ -204,7 +280,7 @@ to a Hugs script and try running tests or using the :t command to provide
 clues.  Can you suggest an alternative definition for strange that is more
 efficient, more concise, and also easier to understand?
 
-Answer:
+--------------------------    Answer:   ------------------------------
 The strange function takes a list as an argument and returns the middle
 element of that list (in the case of an odd number of elements) or the 
 right-most middle element of a list (in the case of an even number of
