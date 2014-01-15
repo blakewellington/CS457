@@ -153,6 +153,27 @@ Now suppose that we define the following function using multiApply:
 
 What is the type of this function, and what exactly does it do?
 
+Answer:
+the q function is of type a, the polymorphic type. It applies to any
+Haskell primitive type or user-defined type. To test this, I ran the
+following command:
+
+:t q
+
+which returns
+
+q :: (a -> a) -> Int -> Int -> a -> a
+
+So the q function is of a generic, polymorphic type. It can return any
+type of value, depending on what type of values are passed into it
+as a list.
+
+
+
+
+
+
+
 ----------------------------------------------------------------------
 Question:
 3.  The Haskell prelude includes an operator !! for selecting a numbered
