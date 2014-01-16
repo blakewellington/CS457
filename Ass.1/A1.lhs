@@ -4,6 +4,7 @@ CS457/557 Functional Languages, Winter 2014                 Homework 1
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 1. Explain what the following Haskell function does:
 
 > dup    :: (a -> a -> a) -> a -> a
@@ -25,6 +26,7 @@ Testing this:
 
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 Now Consider the following two functions, and show how each of them
 can be rewritten using dup:
 
@@ -67,6 +69,7 @@ and for square:
 
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 2. Without using any explicit recursion, given Haskell definitions for
 the following functions:
 
@@ -128,6 +131,7 @@ Testing:
 
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 - logTwo :: Integer -> Int
   (logTwo v) returns the smallest integer n such that v < powerOfTwo n.
 
@@ -173,6 +177,7 @@ Testing:
 
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 - copy :: Int -> a -> [a]
   (copy n x) returns a list containing n copies of the value x.  For
   example, copy 3 True should give [True, True, True].  (The Haskell
@@ -211,6 +216,7 @@ Testing:
 
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 - multiApply :: (a -> a) -> Int -> a -> a
   (multiApply f n x)  returns the value that is obtained when the
   function f is applied n times to the value x.  For example,
@@ -226,7 +232,9 @@ using the !! operator, we can implement multiApply.
 > multiApply :: (a -> a) -> Int -> a -> a
 > multiApply f n x = (iterate f x ) !! n
 
+----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 Now suppose that we define the following function using multiApply:
 
 > q f n m x = multiApply (multiApply f n) m x
@@ -237,7 +245,7 @@ What is the type of this function, and what exactly does it do?
 The q function is of type (a -> a) -> Int -> Int -> a -> a 
 To test this, I ran the following command:
 
-:t q
+:type q
 
 which returns
 
@@ -249,9 +257,63 @@ type.
 
 As for what it does...
 
+Haskell functions can be descried as "curried", meaning they take 
+their arguments one at a time.  The q function could also be said to
+take the left-most multiApply with three arguments:
+	1. (multiApply f n)
+	2. m
+	3. x
+
+The first argument returns a function, which becomes the function
+used in the first multiApply of the q function.  If we use the 
+interpreter, we can see the Type of (multiApply (+2) 3):
+
+   *Main> :t multiApply (+3) 1
+   multiApply (+3) 1 :: Num a => a -> a
+
+Since the multiApply function takes a function as its first argument,
+this parenthesized function (multiApply f n) returns a function that
+is then used in the larger q function's first multiApply.
+
+An example may help to clear this up. Consider the function:
+
+	q (+3) 1 1 1
+
+Replacing the q function with its definition (and labeling the 
+parameters, we get:
+
+	multiApply (multiApply (+3) 1) 1 1
+	----1----- -------2-------- 3  4 5
+
+The way Haskell evaluates this expression is from left to right. We have
+already seen that expression #2 (multiApply (+3) 1) has type:
+
+   multiApply (+3) 1 :: Num a => a -> a
+
+which returns a function a => a -> a.  That function, in turn, is the
+first parameter of expression #1 (multiApply). The last two values, #4
+and #5, then become the last paramters of the first multiApply function. 
+
+Back to our example:
+
+	q (+3) 1 1 1
+
+this really means "take the function 'add 3 one time' and apply it one
+time to the number 1".  Similarly,
+
+	q (+4) 3 2 5
+
+means "take the function 'add 4 three times' and apply it 2 times to 
+the number 5".  Doing some quick mental arithmetic, we are adding 12 to
+5 two times, which will equal 29.  Checking the results in the 
+interpreter shows this to be true:
+
+*Main> q (+4) 3 2 5
+29
 
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 3.  The Haskell prelude includes an operator !! for selecting a numbered
 element of the list, with the first element starting at index 0.  For
 example, [1..10] !! 0 is 1, while [1..10] !! 7 is 6.  Give a definition
@@ -267,8 +329,23 @@ To reverse the !! operator, we can simply reverse a list, then apply the
 > revindex :: [a] -> Int -> a
 > revindex xs n = reverse xs !! n
 
+Testing:
+*Main> revindex [0,1,2,3,4,5] 2
+3
+*Main> revindex [1,3..99] 6
+87
+*Main> revindex [1,2,3] 0
+3
+*Main> revindex [1,2,3] 1
+2
+*Main> revindex [1,2,3] 2
+1
+*Main> revindex [1,2,3] 3
+*** Exception: Prelude.(!!): index too large
+
 ----------------------------------------------------------------------
 Question:
+----------------------------------------------------------------------
 4.  Consider the following fragment of Haskell code:
 
 > strange xs = head (head (reverse (takeWhile notnull (iterate twirl xs))))
@@ -309,4 +386,18 @@ functionality can be replicated with a much simpler function:
 > notSoStrange :: [a] -> a
 > notSoStrange xs = xs !! (length xs `div` 2)
 
+Testing:
+*Main> strange ["left", "middle", "right"]
+"middle"
+*Main> strange ["John","Paul","Ringo","George"]
+"Ringo"
+*Main> strange [1..100]
+51
+
+*Main> notSoStrange ["left", "middle", "right"]
+"middle"
+*Main> notSoStrange ["John","Paul","Ringo","George"]
+"Ringo"
+*Main> notSoStrange [1..100]
+51
 ----------------------------------------------------------------------
