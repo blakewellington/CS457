@@ -10,7 +10,9 @@ Question:
 > dup    :: (a -> a -> a) -> a -> a
 > dup f x = f x x
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 The dup function takes a function and a single argument and returns
 the value of the function with the argument duplicated.
 
@@ -36,7 +38,9 @@ double n = 2 * n
 square  :: Integer -> Integer
 square n = n * n
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 The previous functions can use the dup function as written below. Since
 the dup function duplicates the arguments of a function, it can be used
 in functions that use a given argument twice, such as squaring or 
@@ -78,7 +82,9 @@ the following functions:
   powerOfTwo 8 should return 256.  Of course, your answer should *not*
   use the built in Haskell functions for raising a value to a power :-)
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 Since Haskell works well against lists, this task can be converted into
 one involving lists. The product function can be applied to a list of
 numbers to multiply them all together. Applied to this problem, the 
@@ -135,7 +141,9 @@ Question:
 - logTwo :: Integer -> Int
   (logTwo v) returns the smallest integer n such that v < powerOfTwo n.
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 There are undoubtedly many ways to solve this.  To develop this 
 non-recursively, I decided to use a comprehension to build a list of
 numbers that could be tested.
@@ -185,7 +193,9 @@ Question:
   you should not use replicate in your answer; you should not replicate
   replicate either :-)
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 This version of copy uses the repeat prelude function to build an 
 infinitely long list of repeating values, then takes the first n
 values in that list.
@@ -223,7 +233,9 @@ Question:
   multiApply square 2 2, should return 16, while
   multiApply not 0 True will return True.
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 To apply a function multiple times, one can employ the iterate function.
 The iterate function applies a function to a starting value and repeats
 indefinitely. By choosing some defined element of the resulting list, 
@@ -241,7 +253,9 @@ Now suppose that we define the following function using multiApply:
 
 What is the type of this function, and what exactly does it do?
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 The q function is of type (a -> a) -> Int -> Int -> a -> a 
 To test this, I ran the following command:
 
@@ -322,7 +336,9 @@ as (!!) except that it starts counting from the end of the input list.
 For example, revindex [1..10] 0 should return 10, while revindex [1..10] 7
 whould return 3.
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 To reverse the !! operator, we can simply reverse a list, then apply the
 !! operator to it.
 
@@ -357,7 +373,9 @@ to a Hugs script and try running tests or using the :t command to provide
 clues.  Can you suggest an alternative definition for strange that is more
 efficient, more concise, and also easier to understand?
 
---------------------------    Answer:   ------------------------------
+----------------------------------------------------------------------
+Answer:
+----------------------------------------------------------------------
 The strange function takes a list as an argument and returns the middle
 element of that list (in the case of an odd number of elements) or the 
 right-most middle element of a list (in the case of an even number of
